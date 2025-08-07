@@ -25,6 +25,14 @@ export interface CommandOptions extends CommonOptions {
    */
   token?: string
   /**
+   * GitHub API version
+   */
+  apiVersion?: string
+  /**
+   * Detect private repositories
+   */
+  private?: boolean
+  /**
    * Environment variable prefix
    */
   envPrefix?: string
@@ -39,4 +47,10 @@ export type SyncOptions = Required<CommandOptions>
 export interface PublicKey {
   key_id: string
   key: string
+}
+
+export interface Repo {
+  name: string
+  full_name: string
+  private: boolean
 }

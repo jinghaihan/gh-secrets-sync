@@ -1,8 +1,13 @@
 # GitHub Secrets Sync
 
+[![npm version][npm-version-src]][npm-version-href]
+[![bundle][bundle-src]][bundle-href]
+[![JSDocs][jsdocs-src]][jsdocs-href]
+[![License][license-src]][license-href]
+
 A CLI tool to batch sync GitHub Actions secrets across multiple repositories. Sync secrets from a central repository to target repositories using GitHub CI.
 
-## Why Use This Tool?
+## Why?
 
 Managing GitHub Actions secrets across multiple repositories can be tedious:
 
@@ -18,13 +23,14 @@ This tool automates the process, allowing you to sync secrets across multiple re
 
 ```yaml
 repos:
-  - owner/vscode-extension1
-  - owner/vscode-extension2
+  - owner/vscode-*
 
 envs:
   - VSCE_PAT
   - OVSX_PAT
 ```
+
+> **Note**: The `repos` configuration supports regex patterns with `*` wildcards. The tool will fetch all repositories accessible by your GitHub token and filter them based on the regex patterns. For example, `owner/vscode-*` will match all repositories under the specified owner that start with "vscode-".
 
 2. **Set up GitHub CI** in your central repository:
 
@@ -37,8 +43,10 @@ permissions:
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
 
 jobs:
   sync:
@@ -81,3 +89,16 @@ jobs:
 ## License
 
 [MIT](./LICENSE) License © [jinghaihan](https://github.com/jinghaihan)
+
+<!-- Badges -->
+
+[npm-version-src]: https://img.shields.io/npm/v/gh-secrets-sync?style=flat&colorA=080f12&colorB=1fa669
+[npm-version-href]: https://npmjs.com/package/gh-secrets-sync
+[npm-downloads-src]: https://img.shields.io/npm/dm/gh-secrets-sync?style=flat&colorA=080f12&colorB=1fa669
+[npm-downloads-href]: https://npmjs.com/package/gh-secrets-sync
+[bundle-src]: https://img.shields.io/bundlephobia/minzip/gh-secrets-sync?style=flat&colorA=080f12&colorB=1fa669&label=minzip
+[bundle-href]: https://bundlephobia.com/result?p=gh-secrets-sync
+[license-src]: https://img.shields.io/badge/license-MIT-blue.svg?style=flat&colorA=080f12&colorB=1fa669
+[license-href]: https://github.com/jinghaihan/gh-secrets-sync/LICENSE
+[jsdocs-src]: https://img.shields.io/badge/jsdocs-reference-080f12?style=flat&colorA=080f12&colorB=1fa669
+[jsdocs-href]: https://www.jsdocs.io/package/gh-secrets-sync

@@ -15,6 +15,8 @@ try {
     .option('--config <config>', 'secrets config file', { default: './secrets.config.yaml' })
     .option('--secrets <secrets...>', 'secrets name to sync', { default: [] })
     .option('--token <token>', 'GitHub token')
+    .option('--api-version <version>', 'GitHub API version', { default: '2022-11-28' })
+    .option('--private', 'Detect private repositories', { default: false })
     .option('--env-prefix <prefix>', 'environment variable prefix', { default: '' })
     .option('--strict', 'Throw error if secret is not found in the environment variables', { default: true })
     .option('--dry', 'Dry run', { default: false })

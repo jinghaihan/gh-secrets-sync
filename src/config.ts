@@ -5,33 +5,43 @@ import c from 'ansis'
 import { join } from 'pathe'
 import { parse } from 'yaml'
 import { DEFAULT_SYNC_OPTIONS } from './constants'
+import { getRepos } from './git'
 
-export function resolveConfig(options: CommandOptions): SyncOptions {
-  const getConfig = () => {
-    const cwd = options.cwd || process.cwd()
+function normalizeConfig(options: CommandOptions): SyncOptions {
+  const cwd = options.cwd || process.cwd()
 
-    if (typeof options.repos === 'string')
-      options.repos = [options.repos]
+  if (typeof options.repos === 'string')
+    options.repos = [options.repos]
 
-    if (typeof options.secrets === 'string')
-      options.secrets = [options.secrets]
+  if (typeof options.secrets === 'string')
+    options.secrets = [options.secrets]
 
-    const config = { ...DEFAULT_SYNC_OPTIONS, ...options }
-    config.token = config.token || process.env.GITHUB_PAT || process.env.GITHUB_TOKEN || ''
+  const config = { ...DEFAULT_SYNC_OPTIONS, ...options }
+  config.token = config.token || process.env.GITHUB_PAT || process.env.GITHUB_TOKEN || ''
 
-    // ignore secrets config file if repos and secrets are provided
-    if (config.repos.length && config.secrets.length) {
-      return config as SyncOptions
-    }
-
-    const configContent = parse(readFileSync(join(cwd, config.config), 'utf-8'))
-    config.repos = Array.isArray(configContent.repos) ? configContent.repos : []
-    config.secrets = Array.isArray(configContent.envs) ? configContent.envs : []
-
+  // ignore secrets config file if repos and secrets are provided
+  if (config.repos.length && config.secrets.length) {
     return config as SyncOptions
   }
 
-  const config = getConfig()
+  const configContent = parse(readFileSync(join(cwd, config.config), 'utf-8'))
+  config.repos = Array.isArray(configContent.repos) ? configContent.repos : []
+  config.secrets = Array.isArray(configContent.envs) ? configContent.envs : []
+
+  return config as SyncOptions
+}
+
+export async function resolveConfig(options: CommandOptions): Promise<SyncOptions> {
+  const config = normalizeConfig(options)
+
+  // resolve repos with regex
+  if (config.repos.some(r => r.includes('*'))) {
+    const repos = await getReposByRegex(config)
+    if (repos.length) {
+      config.repos = [...new Set([...config.repos, ...repos])]
+    }
+    config.repos = config.repos.filter(r => !r.includes('*'))
+  }
 
   if (!config.token)
     throw new Error(c.red('Please provide a GitHub token'))
@@ -41,4 +51,20 @@ export function resolveConfig(options: CommandOptions): SyncOptions {
     throw new Error(c.red('Please provide secrets to sync'))
 
   return config
+}
+
+async function getReposByRegex(options: SyncOptions) {
+  const _repos = options.repos.filter(r => r.includes('*'))
+  const regexes = _repos.find(r => r === '*') ? ['*'] : _repos.map(r => new RegExp(r))
+  if (regexes.length === 0)
+    return []
+
+  const list = await getRepos(options)
+  const repos = options.private ? list : list.filter(r => !r.private)
+  if (regexes.find(r => r === '*'))
+    return repos.map(r => r.full_name)
+
+  return repos
+    .filter(r => regexes.some(regex => (regex as RegExp).test(r.full_name)))
+    .map(r => r.full_name)
 }

@@ -3,8 +3,8 @@ export const DEFAULT_SYNC_OPTIONS = {
   repos: [],
   secrets: [],
   envPrefix: '',
+  apiVersion: '2022-11-28',
+  private: false,
   dry: false,
   strict: true,
 } as const
-
-export const GITHUB_API_VERSION = '2022-11-28'

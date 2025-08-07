@@ -1,17 +1,14 @@
-import type { PublicKey, SyncOptions } from './types'
+import type { PublicKey, Repo, SyncOptions } from './types'
 import process from 'node:process'
 import { Octokit } from '@octokit/core'
 import c from 'ansis'
 import Spinner from 'yocto-spinner'
-import { GITHUB_API_VERSION } from './constants'
 import { encrypt } from './encrypt'
-import { formatToken } from './utils'
+import { formatToken, parseRepo } from './utils'
 
 // https://docs.github.com/en/rest/actions/secrets?apiVersion=2022-11-28#get-a-repository-public-key
 export async function getRepoPublicKey(repoPath: string, config: SyncOptions): Promise<PublicKey> {
-  const octokit = new Octokit({
-    auth: formatToken(config.token),
-  })
+  const octokit = createOctokit(config)
 
   const spinner = Spinner({ text: c.blue(`Fetching public key for ${repoPath}`) }).start()
   const { owner, repo } = parseRepo(repoPath)
@@ -25,7 +22,7 @@ export async function getRepoPublicKey(repoPath: string, config: SyncOptions): P
         owner,
         repo,
         headers: {
-          'X-GitHub-Api-Version': GITHUB_API_VERSION,
+          'X-GitHub-Api-Version': config.apiVersion,
         },
       },
     )
@@ -53,9 +50,7 @@ export async function createOrUpdateRepoSecret(
   repoPath: string,
   config: SyncOptions,
 ) {
-  const octokit = new Octokit({
-    auth: formatToken(config.token),
-  })
+  const octokit = createOctokit(config)
 
   secretName = `${config.envPrefix}${secretName}`
 
@@ -76,7 +71,7 @@ export async function createOrUpdateRepoSecret(
         encrypted_value: await encrypt(secretValue, publicKey),
         key_id: publicKey.key_id,
         headers: {
-          'X-GitHub-Api-Version': GITHUB_API_VERSION,
+          'X-GitHub-Api-Version': config.apiVersion,
         },
       },
     )
@@ -99,7 +94,35 @@ export async function createOrUpdateRepoSecret(
   return res
 }
 
-function parseRepo(repoPath: string) {
-  const [owner, repo] = repoPath.split('/')
-  return { owner, repo }
+// https://docs.github.com/rest/repos/repos#list-repositories-for-the-authenticated-user
+export async function getRepos(config: SyncOptions) {
+  const octokit = createOctokit(config)
+
+  const spinner = Spinner({ text: c.blue('Fetching repositories') }).start()
+
+  let res: Repo[] = []
+  if (!config.dry) {
+    const { status, data } = await octokit.request('GET /user/repos', {
+      headers: {
+        'X-GitHub-Api-Version': config.apiVersion,
+      },
+    })
+    if (status !== 200) {
+      spinner.error(c.red('Failed to fetch repositories'))
+      console.error(c.red(JSON.stringify(data, null, 2)))
+      process.exit(1)
+    }
+    res = data
+  }
+  else {
+    console.log()
+    console.log(c.yellow('Fetching repositories'))
+  }
+
+  spinner.success(c.green('Repositories fetched successfully'))
+  return res
+}
+
+function createOctokit(config: SyncOptions) {
+  return new Octokit({ auth: formatToken(config.token) })
 }
