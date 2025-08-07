@@ -57,6 +57,8 @@ export async function createOrUpdateRepoSecret(
     auth: formatToken(config.token),
   })
 
+  secretName = `${config.envPrefix}${secretName}`
+
   const spinner = Spinner({ text: c.blue(`Create or update ${secretName} for ${repoPath}`) }).start()
   const { owner, repo } = parseRepo(repoPath)
   const url = `PUT /repos/${owner}/${repo}/actions/secrets/${secretName}`
