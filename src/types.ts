@@ -54,3 +54,9 @@ export interface Repo {
   full_name: string
   private: boolean
 }
+
+export interface Secret {
+  name: string
+  created_at: string
+  updated_ad: string
+}

@@ -49,9 +49,6 @@ catalogs:
     pathe:
       specifier: ^2.0.3
       version: 2.0.3
-    unconfig:
-      specifier: ^7.3.2
-      version: 7.3.2
     yaml:
       specifier: ^2.8.1
       version: 2.8.1
@@ -103,9 +100,6 @@ importers:
       pathe:
         specifier: catalog:node
         version: 2.0.3
-      unconfig:
-        specifier: catalog:node
-        version: 7.3.2
       yaml:
         specifier: catalog:node
         version: 2.8.1

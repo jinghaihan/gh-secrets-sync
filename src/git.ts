@@ -6,6 +6,31 @@ import Spinner from 'yocto-spinner'
 import { encrypt } from './encrypt'
 import { formatToken, parseRepo } from './utils'
 
+export async function readTokenFromGitHubCli() {
+  try {
+    return await execCommand('gh', ['auth', 'token'])
+  }
+  catch {
+    return ''
+  }
+}
+
+export async function getGitHubRepo(baseUrl: string) {
+  const url = await execCommand('git', ['config', '--get', 'remote.origin.url'])
+  const escapedBaseUrl = baseUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const regex = new RegExp(`${escapedBaseUrl}[\/:]([\\w\\d._-]+?)\\/([\\w\\d._-]+?)(\\.git)?$`, 'i')
+  const match = regex.exec(url)
+  if (!match)
+    throw new Error(`Can not parse GitHub repo from url ${url}`)
+  return `${match[1]}/${match[2]}`
+}
+
+async function execCommand(cmd: string, args: string[]) {
+  const { execa } = await import('execa')
+  const res = await execa(cmd, args)
+  return res.stdout.trim()
+}
+
 // https://docs.github.com/en/rest/actions/secrets?apiVersion=2022-11-28#get-a-repository-public-key
 export async function getRepoPublicKey(repoPath: string, config: SyncOptions): Promise<PublicKey> {
   const octokit = createOctokit(config)

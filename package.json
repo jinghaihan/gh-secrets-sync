@@ -56,7 +56,6 @@
     "execa": "catalog:node",
     "libsodium-wrappers": "catalog:utils",
     "pathe": "catalog:node",
-    "unconfig": "catalog:node",
     "yaml": "catalog:node",
     "yocto-spinner": "catalog:node"
   },
