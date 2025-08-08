@@ -1,4 +1,4 @@
-import type { CommandOptions, Repo, SyncOptions } from './types'
+import type { CommandOptions, Repo, Secret, SyncOptions } from './types'
 import { readFile } from 'node:fs/promises'
 import process from 'node:process'
 import c from 'ansis'
@@ -6,7 +6,7 @@ import { join } from 'pathe'
 import { parse } from 'yaml'
 import { DEFAULT_SYNC_OPTIONS } from './constants'
 import { createRegexFilter } from './filter'
-import { getRepos, readTokenFromGitHubCli } from './git'
+import { getRepos, getRepoSecrets, readTokenFromGitHubCli } from './git'
 
 async function normalizeConfig(options: CommandOptions): Promise<SyncOptions> {
   const cwd = options.cwd || process.cwd()
@@ -40,6 +40,10 @@ export async function resolveConfig(options: CommandOptions): Promise<SyncOption
     await resolveRepoPatterns(config)
   }
 
+  if (config.secrets.some(s => s.includes('*'))) {
+    await resolveSecretPatterns(config)
+  }
+
   if (!config.token)
     throw new Error(c.red('Please provide a GitHub token'))
   if (!config.repos)
@@ -61,4 +65,17 @@ async function resolveRepoPatterns(options: SyncOptions) {
     options.repos = [...new Set([...options.repos, ...repos])]
   }
   options.repos = options.repos.filter(i => !i.includes('*'))
+}
+
+async function resolveSecretPatterns(options: SyncOptions) {
+  const filter = createRegexFilter<'name', Secret>(options.secrets, 'name')
+
+  const secrets = (await getRepoSecrets(options))
+    .filter(i => filter(i))
+    .map(i => i.name)
+
+  if (secrets.length) {
+    options.secrets = [...new Set([...options.secrets, ...secrets])]
+  }
+  options.secrets = options.secrets.filter(i => !i.includes('*'))
 }

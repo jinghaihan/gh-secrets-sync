@@ -1,4 +1,4 @@
-import type { PublicKey, Repo, SyncOptions } from './types'
+import type { PublicKey, Repo, Secret, SyncOptions } from './types'
 import process from 'node:process'
 import { Octokit } from '@octokit/core'
 import c from 'ansis'
@@ -129,6 +129,41 @@ export async function getRepos(config: SyncOptions): Promise<Repo[]> {
         throw new Error(`HTTP ${status}: ${JSON.stringify(data)}`)
       }
       return data as Repo[]
+    },
+  )
+}
+
+// https://docs.github.com/en/rest/actions/secrets?apiVersion=2022-11-28#list-repository-secrets
+export async function getRepoSecrets(config: SyncOptions): Promise<Secret[]> {
+  const repoPath = config.repo || await getGitHubRepo(config.baseUrl)
+  if (!repoPath)
+    return []
+
+  const octokit = createOctokit(config)
+  const { owner, repo } = parseRepo(repoPath)
+  const url = `GET /repos/${owner}/${repo}/actions/secrets`
+
+  return withSpinner<Secret[]>(
+    `Fetching secrets for ${repoPath}`,
+    `Secrets fetched successfully for ${repoPath}`,
+    `Failed to fetch secrets for ${repoPath}`,
+    `Fetch Secrets: ${c.yellow(url)}`,
+    [],
+    config,
+    async () => {
+      const { status, data } = await octokit.request(url, {
+        owner,
+        repo,
+        headers: {
+          'X-GitHub-Api-Version': config.apiVersion,
+        },
+      })
+
+      if (status !== 200) {
+        throw new Error(`HTTP ${status}: ${JSON.stringify(data)}`)
+      }
+
+      return data.secrets
     },
   )
 }

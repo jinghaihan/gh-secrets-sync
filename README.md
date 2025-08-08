@@ -12,14 +12,13 @@ A CLI tool to batch sync GitHub Actions secrets across multiple repositories. Sy
 Managing GitHub Actions secrets across multiple repositories can be tedious:
 
 - **Manual repetition**: You need to manually add the same secret to each repository
-- **Time-consuming**: Updating a secret across many repos requires visiting each one individually
 - **Error-prone**: Easy to forget to update a secret in one of the repositories
 
 This tool automates the process, allowing you to sync secrets across multiple repositories with a single command.
 
 ## Usage
 
-1. **Create a configuration file** (`secrets.config.yaml`) in your central repository:
+**Create a configuration file** (`secrets.config.yaml`) in your central repository:
 
 ```yaml
 repos:
@@ -30,9 +29,24 @@ envs:
   - OVSX_PAT
 ```
 
-> **Note**: The `repos` configuration supports regex patterns with `*` wildcards. The tool will fetch all repositories accessible by your GitHub token and filter them based on the regex patterns. For example, `owner/vscode-*` will match all repositories under the specified owner that start with "vscode-".
+> **Note**: Both `repos` and `envs` support `*` wildcards. For `repos`, the tool lists all repositories accessible by your token and filters by the pattern (e.g., `owner/vscode-*`). For `envs`, wildcards are expanded by listing secrets from the central repository and matching by name. The central repository is auto-detected in GitHub Actions (from the checked-out repo); for local runs, pass `--repo <owner/repo>`.
 
-2. **Set up GitHub CI** in your central repository:
+### Local usage
+
+If GitHub CI feels too complex, you can simply run it locally:
+
+```bash
+# Set your token and secret values in env
+export GITHUB_PAT=...
+export VSCE_PAT=...
+export OVSX_PAT=...
+
+npx gh-secrets-sync
+```
+
+### GitHub CI usage
+
+**Set up GitHub CI** in your central repository:
 
 ```yaml
 # .github/workflows/sync-secrets.yml
@@ -69,7 +83,7 @@ jobs:
           OVSX_PAT: ${{secrets.OVSX_PAT}}
 ```
 
-3. **Configure secrets in your central repository**:
+**Configure secrets in your central repository**:
    - Go to your central repository Settings > Secrets and variables > Actions
    - Add `GITHUB_PAT` as a repository secret (this is your GitHub Personal Access Token)
    - Add `VSCE_PAT` and `OVSX_PAT` as repository secrets

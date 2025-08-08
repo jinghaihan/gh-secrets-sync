@@ -4,6 +4,10 @@ export interface CommonOptions {
    * Dry run
    */
   dry?: boolean
+  /**
+   * Throw error if secret is not found in the environment variables
+   */
+  strict?: boolean
 }
 
 export interface CommandOptions extends CommonOptions {
@@ -37,9 +41,14 @@ export interface CommandOptions extends CommonOptions {
    */
   envPrefix?: string
   /**
-   * Throw error if secret is not found in the environment variables
+   * Github base url
+   * @default github.com
    */
-  strict?: boolean
+  baseUrl?: string
+  /**
+   * Central GitHub repository
+   */
+  repo?: string
 }
 
 export type SyncOptions = Required<CommandOptions>
