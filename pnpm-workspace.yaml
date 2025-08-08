@@ -14,6 +14,7 @@ catalogs:
     lint-staged: ^16.1.4
     simple-git-hooks: ^2.13.1
   node:
+    '@clack/prompts': ^0.11.0
     ansis: ^4.1.0
     cac: ^6.7.14
     execa: ^9.6.0

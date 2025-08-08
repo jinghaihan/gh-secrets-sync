@@ -1,6 +1,7 @@
 import type { CommandOptions, Repo, Secret, SyncOptions } from './types'
 import { readFile } from 'node:fs/promises'
 import process from 'node:process'
+import * as p from '@clack/prompts'
 import c from 'ansis'
 import { join } from 'pathe'
 import { parse } from 'yaml'
@@ -35,11 +36,12 @@ async function normalizeConfig(options: CommandOptions): Promise<SyncOptions> {
 export async function resolveConfig(options: CommandOptions): Promise<SyncOptions> {
   const config = await normalizeConfig(options)
 
-  // resolve repos with regex
+  // resolve repos with regex patterns
   if (config.repos.some(r => r.includes('*'))) {
     await resolveRepoPatterns(config)
   }
 
+  // resolve secrets with regex patterns
   if (config.secrets.some(s => s.includes('*'))) {
     await resolveSecretPatterns(config)
   }
@@ -57,25 +59,71 @@ export async function resolveConfig(options: CommandOptions): Promise<SyncOption
 async function resolveRepoPatterns(options: SyncOptions) {
   const filter = createRegexFilter<'full_name', Repo>(options.repos, 'full_name')
 
-  const repos = (await getRepos(options))
+  let repos = (await getRepos(options))
     .filter(i => filter(i) && (options.private || !i.private))
     .map(i => i.full_name)
 
   if (repos.length) {
-    options.repos = [...new Set([...options.repos, ...repos])]
+    repos = [...new Set([...options.repos, ...repos])]
   }
-  options.repos = options.repos.filter(i => !i.includes('*'))
+  repos = repos.filter(i => !i.includes('*'))
+
+  if (options.yes || !repos.length) {
+    options.repos = repos
+    return
+  }
+
+  const result = await p.multiselect<string>({
+    message: 'Select repos to sync',
+    options: repos.map(i => ({ label: i, value: i })),
+    initialValues: repos,
+  })
+
+  if (p.isCancel(result)) {
+    console.error(c.red('aborting'))
+    process.exit(1)
+  }
+
+  if (typeof result === 'symbol') {
+    console.error(c.red('invalid repo selection'))
+    process.exit(1)
+  }
+
+  options.repos = result
 }
 
 async function resolveSecretPatterns(options: SyncOptions) {
   const filter = createRegexFilter<'name', Secret>(options.secrets, 'name')
 
-  const secrets = (await getRepoSecrets(options))
+  let secrets = (await getRepoSecrets(options))
     .filter(i => filter(i))
     .map(i => i.name)
 
   if (secrets.length) {
-    options.secrets = [...new Set([...options.secrets, ...secrets])]
+    secrets = [...new Set([...options.secrets, ...secrets])]
   }
-  options.secrets = options.secrets.filter(i => !i.includes('*'))
+  secrets = secrets.filter(i => !i.includes('*'))
+
+  if (options.yes || !secrets.length) {
+    options.secrets = secrets
+    return
+  }
+
+  const result = await p.multiselect<string>({
+    message: 'Select secrets to sync',
+    options: secrets.map(i => ({ label: i, value: i })),
+    initialValues: secrets,
+  })
+
+  if (p.isCancel(result)) {
+    console.error(c.red('aborting'))
+    process.exit(1)
+  }
+
+  if (typeof result === 'symbol') {
+    console.error(c.red('invalid secret selection'))
+    process.exit(1)
+  }
+
+  options.secrets = result
 }

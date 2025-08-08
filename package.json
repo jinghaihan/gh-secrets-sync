@@ -50,6 +50,7 @@
     "prepublishOnly": "pnpm build"
   },
   "dependencies": {
+    "@clack/prompts": "catalog:node",
     "@octokit/core": "catalog:utils",
     "ansis": "catalog:node",
     "cac": "catalog:node",

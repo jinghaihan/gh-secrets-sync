@@ -37,6 +37,9 @@ catalogs:
       specifier: ^2.13.1
       version: 2.13.1
   node:
+    '@clack/prompts':
+      specifier: ^0.11.0
+      version: 0.11.0
     ansis:
       specifier: ^4.1.0
       version: 4.1.0
@@ -82,6 +85,9 @@ importers:
 
   .:
     dependencies:
+      '@clack/prompts':
+        specifier: catalog:node
+        version: 0.11.0
       '@octokit/core':
         specifier: catalog:utils
         version: 7.0.3

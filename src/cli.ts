@@ -20,6 +20,7 @@ try {
     .option('--env-prefix <prefix>', 'environment variable prefix', { default: '' })
     .option('--repo <repo>', 'central GitHub repository')
     .option('--strict', 'Throw error if secret is not found in the environment variables', { default: true })
+    .option('--yes', 'Prompt to confirm resolved matches when regex patterns are used in repos or secrets', { default: false })
     .option('--dry', 'Dry run', { default: false })
     .allowUnknownOptions()
     .action(async (options: CommandOptions) => {

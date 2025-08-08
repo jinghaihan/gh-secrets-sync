@@ -9,4 +9,5 @@ export const DEFAULT_SYNC_OPTIONS = {
   repo: '',
   dry: false,
   strict: true,
+  yes: false,
 } as const

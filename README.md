@@ -18,7 +18,7 @@ This tool automates the process, allowing you to sync secrets across multiple re
 
 ## Usage
 
-**Create a configuration file** (`secrets.config.yaml`) in your central repository:
+**Create a configuration file** (`secrets.config.yaml`) in your central repository or local directory:
 
 ```yaml
 repos:
@@ -29,7 +29,8 @@ envs:
   - OVSX_PAT
 ```
 
-> **Note**: Both `repos` and `envs` support `*` wildcards. For `repos`, the tool lists all repositories accessible by your token and filters by the pattern (e.g., `owner/vscode-*`). For `envs`, wildcards are expanded by listing secrets from the central repository and matching by name. The central repository is auto-detected in GitHub Actions (from the checked-out repo); for local runs, pass `--repo <owner/repo>`.
+> [!NOTE]
+> Both `repos` and `envs` support `*` wildcards. For `repos`, the tool lists all repositories accessible by your token and filters by the pattern (e.g., `owner/vscode-*`). For `envs`, wildcards are expanded by listing secrets from the central repository and matching by name. The central repository is auto-detected in GitHub Actions (from the checked-out repo); for local runs, pass `--repo <owner/repo>`.
 
 ### Local usage
 
@@ -76,7 +77,8 @@ jobs:
           node-version: lts/*
 
       - name: Sync Secrets
-        run: npx gh-secrets-sync
+        # if regex patterns are used in `repos` or `secrets` must set `--yes` in GitHub Actions
+        run: npx gh-secrets-sync --yes
         env:
           GITHUB_PAT: ${{secrets.GITHUB_PAT}}
           VSCE_PAT: ${{secrets.VSCE_PAT}}

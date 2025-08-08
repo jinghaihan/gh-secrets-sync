@@ -8,6 +8,11 @@ export interface CommonOptions {
    * Throw error if secret is not found in the environment variables
    */
   strict?: boolean
+  /**
+   * Prompt for confirmation when regex patterns are used in `repos` or `secrets`.
+   * Shows the resolved matches and requires user approval.
+   */
+  yes?: boolean
 }
 
 export interface CommandOptions extends CommonOptions {
@@ -67,5 +72,5 @@ export interface Repo {
 export interface Secret {
   name: string
   created_at: string
-  updated_ad: string
+  updated_at: string
 }
