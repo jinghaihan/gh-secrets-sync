@@ -38,7 +38,7 @@ If GitHub CI feels too complex, you can simply run it locally:
 
 ```bash
 # Set your token and secret values in env
-export GITHUB_PAT=...
+export GH_PAT=...
 export VSCE_PAT=...
 export OVSX_PAT=...
 
@@ -80,14 +80,14 @@ jobs:
         # if regex patterns are used in `repos` or `secrets` must set `--yes` in GitHub Actions
         run: npx gh-secrets-sync --yes
         env:
-          GITHUB_PAT: ${{secrets.GITHUB_PAT}}
+          GH_PAT: ${{secrets.GH_PAT}}
           VSCE_PAT: ${{secrets.VSCE_PAT}}
           OVSX_PAT: ${{secrets.OVSX_PAT}}
 ```
 
 **Configure secrets in your central repository**:
    - Go to your central repository Settings > Secrets and variables > Actions
-   - Add `GITHUB_PAT` as a repository secret (this is your GitHub Personal Access Token)
+   - Add `GH_PAT` as a repository secret (this is your GitHub Personal Access Token)
    - Add `VSCE_PAT` and `OVSX_PAT` as repository secrets
 
 ### How to Get Your GitHub Token
@@ -100,7 +100,7 @@ jobs:
    - Repository permissions > Actions: Read and write
    - Metadata
 5. Click "Generate token"
-6. Add the token as a repository secret named `GITHUB_PAT` in your central repository
+6. Add the token as a repository secret named `GH_PAT` in your central repository
 
 ## License
 

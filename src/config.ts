@@ -19,7 +19,7 @@ async function normalizeConfig(options: CommandOptions): Promise<SyncOptions> {
     options.secrets = [options.secrets]
 
   const config = { ...DEFAULT_SYNC_OPTIONS, ...options }
-  config.token = config.token || process.env.GITHUB_PAT || process.env.GITHUB_TOKEN || await readTokenFromGitHubCli()
+  config.token = config.token || process.env.GH_PAT || process.env.GITHUB_TOKEN || await readTokenFromGitHubCli()
 
   // ignore secrets config file if repos and secrets are provided
   if (config.repos.length && config.secrets.length) {

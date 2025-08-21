@@ -1,17 +1,17 @@
 packages: []
 catalogs:
   build:
-    unbuild: ^3.6.0
+    unbuild: ^3.6.1
   cli:
-    bumpp: ^10.2.2
-    pncat: ^0.4.1
-    taze: ^19.1.0
+    bumpp: ^10.2.3
+    pncat: ^0.4.2
+    taze: ^19.3.0
   dev:
     typescript: ^5.9.2
   lint:
-    '@antfu/eslint-config': ^5.2.0
-    eslint: ^9.32.0
-    lint-staged: ^16.1.4
+    '@antfu/eslint-config': ^5.2.1
+    eslint: ^9.33.0
+    lint-staged: ^16.1.5
     simple-git-hooks: ^2.13.1
   node:
     '@clack/prompts': ^0.11.0
@@ -22,12 +22,12 @@ catalogs:
     yaml: ^2.8.1
     yocto-spinner: ^1.0.0
   script:
-    tsx: ^4.20.3
+    tsx: ^4.20.4
   test:
     vitest: ^3.2.4
   types:
     '@types/libsodium-wrappers': ^0.7.14
-    '@types/node': ^24.2.0
+    '@types/node': ^24.3.0
   utils:
     '@octokit/core': ^7.0.3
     libsodium-wrappers: ^0.7.15
