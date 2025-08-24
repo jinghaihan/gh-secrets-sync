@@ -17,6 +17,7 @@ try {
     .option('--token <token>', 'GitHub token')
     .option('--api-version <version>', 'GitHub API version', { default: '2022-11-28' })
     .option('--private', 'Detect private repositories', { default: false })
+    .option('--fork', 'Detect forked repositories', { default: false })
     .option('--env-prefix <prefix>', 'environment variable prefix', { default: '' })
     .option('--repo <repo>', 'central GitHub repository')
     .option('--strict', 'Throw error if secret is not found in the environment variables', { default: true })

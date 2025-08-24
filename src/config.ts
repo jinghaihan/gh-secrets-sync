@@ -61,6 +61,7 @@ async function resolveRepoPatterns(options: SyncOptions) {
 
   let repos = (await getRepos(options))
     .filter(i => filter(i) && (options.private || !i.private))
+    .filter(i => options.fork || !i.fork)
     .map(i => i.full_name)
 
   if (repos.length) {

@@ -42,6 +42,10 @@ export interface CommandOptions extends CommonOptions {
    */
   private?: boolean
   /**
+   * Detect forked repositories
+   */
+  fork?: boolean
+  /**
    * Environment variable prefix
    */
   envPrefix?: string
@@ -67,6 +71,7 @@ export interface Repo {
   name: string
   full_name: string
   private: boolean
+  fork: boolean
 }
 
 export interface Secret {
