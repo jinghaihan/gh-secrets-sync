@@ -4,13 +4,13 @@ catalogs:
     unbuild: ^3.6.1
   cli:
     bumpp: ^10.2.3
-    pncat: ^0.4.2
+    pncat: ^0.5.0
     taze: ^19.3.0
   dev:
     typescript: ^5.9.2
   lint:
     '@antfu/eslint-config': ^5.2.1
-    eslint: ^9.33.0
+    eslint: ^9.34.0
     lint-staged: ^16.1.5
     simple-git-hooks: ^2.13.1
   node:
@@ -22,7 +22,7 @@ catalogs:
     yaml: ^2.8.1
     yocto-spinner: ^1.0.0
   script:
-    tsx: ^4.20.4
+    tsx: ^4.20.5
   test:
     vitest: ^3.2.4
   types:
