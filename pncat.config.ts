@@ -11,4 +11,5 @@ export default defineConfig({
       match: ['@octokit/core', 'libsodium-wrappers'],
     },
   ]),
+  postRun: 'eslint --fix "**/package.json" "**/pnpm-workspace.yaml"',
 })

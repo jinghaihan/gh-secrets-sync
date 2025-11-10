@@ -59,7 +59,8 @@ export async function resolveConfig(options: CommandOptions): Promise<SyncOption
 async function resolveRepoPatterns(options: SyncOptions) {
   const filter = createRegexFilter<'full_name', Repo>(options.repos, 'full_name')
 
-  let repos = (await getRepos(options))
+  const repositories = await getRepos(options)
+  let repos = (repositories)
     .filter(i => filter(i) && (options.private || !i.private))
     .filter(i => options.fork || !i.fork)
     .map(i => i.full_name)
@@ -69,7 +70,12 @@ async function resolveRepoPatterns(options: SyncOptions) {
   }
   repos = repos.filter(i => !i.includes('*'))
 
-  if (options.yes || !repos.length) {
+  if (!repos.length) {
+    p.outro(c.red('No repos found'))
+    process.exit(1)
+  }
+
+  if (options.yes) {
     options.repos = repos
     return
   }

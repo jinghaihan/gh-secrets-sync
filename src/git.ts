@@ -1,4 +1,5 @@
 import type { PublicKey, Repo, Secret, SyncOptions } from './types'
+import { writeFile } from 'node:fs/promises'
 import process from 'node:process'
 import { Octokit } from '@octokit/core'
 import c from 'ansis'
@@ -121,6 +122,7 @@ export async function getRepos(config: SyncOptions): Promise<Repo[]> {
     config,
     async () => {
       const { status, data } = await octokit.request(url, {
+        per_page: config.perPage,
         headers: {
           'X-GitHub-Api-Version': config.apiVersion,
         },
@@ -128,6 +130,7 @@ export async function getRepos(config: SyncOptions): Promise<Repo[]> {
       if (status !== 200) {
         throw new Error(`HTTP ${status}: ${JSON.stringify(data)}`)
       }
+      await writeFile('repos.json', JSON.stringify(data, null, 2))
       return data as Repo[]
     },
   )

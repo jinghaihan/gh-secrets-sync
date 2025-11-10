@@ -46,6 +46,10 @@ export interface CommandOptions extends CommonOptions {
    */
   fork?: boolean
   /**
+   * GitHub API per page count
+   */
+  perPage?: number
+  /**
    * Environment variable prefix
    */
   envPrefix?: string

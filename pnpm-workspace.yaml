@@ -3,31 +3,31 @@ catalogs:
   build:
     unbuild: ^3.6.1
   cli:
-    bumpp: ^10.2.3
-    pncat: ^0.5.0
-    taze: ^19.3.0
-  dev:
-    typescript: ^5.9.2
+    bumpp: ^10.3.1
+    pncat: ^0.7.4
+    taze: ^19.9.0
   lint:
-    '@antfu/eslint-config': ^5.2.1
-    eslint: ^9.34.0
-    lint-staged: ^16.1.5
+    '@antfu/eslint-config': ^6.2.0
+    eslint: ^9.39.1
+    lint-staged: ^16.2.6
     simple-git-hooks: ^2.13.1
   node:
     '@clack/prompts': ^0.11.0
-    ansis: ^4.1.0
+    ansis: ^4.2.0
     cac: ^6.7.14
     execa: ^9.6.0
     pathe: ^2.0.3
     yaml: ^2.8.1
     yocto-spinner: ^1.0.0
   script:
-    tsx: ^4.20.5
+    tsx: ^4.20.6
   test:
-    vitest: ^3.2.4
+    vitest: ^4.0.8
+  tsc:
+    typescript: ^5.9.3
   types:
     '@types/libsodium-wrappers': ^0.7.14
-    '@types/node': ^24.3.0
+    '@types/node': ^24.10.0
   utils:
-    '@octokit/core': ^7.0.3
+    '@octokit/core': ^7.0.6
     libsodium-wrappers: ^0.7.15
