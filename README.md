@@ -7,6 +7,10 @@
 
 A CLI tool to batch sync GitHub Actions secrets across multiple repositories. Sync secrets from a central repository to target repositories using GitHub CI.
 
+<p align='center'>
+<img src='./assets/help.png' />
+</p>
+
 ## Why?
 
 Managing GitHub Actions secrets across multiple repositories can be tedious:
