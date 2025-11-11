@@ -1,7 +1,7 @@
 {
   "name": "gh-secrets-sync",
   "type": "module",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "packageManager": "pnpm@10.21.0",
   "description": "CLI tool to batch sync GitHub Actions secrets across multiple repositories.",
   "author": "jinghaihan",
